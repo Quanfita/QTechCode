@@ -12,7 +12,7 @@ django-imagekit==4.0.2
 django-redis==4.10.0
 djangorestframework==3.10.3
 gunicorn==19.9.0
-html5lib==1.0.1
+html5lib==1.1
 idna==2.8
 jieba==0.39
 Markdown==3.1.1
