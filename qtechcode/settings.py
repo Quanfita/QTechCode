@@ -39,7 +39,7 @@ STORE_FLAG = os.getenv('QTECHCODE_STORE_FLAG', 'True').upper() == 'TRUE'
 
 RESOURCE_FLAG = os.getenv('QTECHCODE_RESOURCE_FLAG', 'True').upper() == 'TRUE'
 
-ALLOWED_HOSTS = ['82.156.34.194','127.0.0.1','quanfita.cn','localhost']
+ALLOWED_HOSTS = ['127.0.0.1','quanfita.cn','localhost']
 
 CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0' # Broker配置，使用Redis作为消息中间件
 
