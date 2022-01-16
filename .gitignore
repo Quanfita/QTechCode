@@ -112,3 +112,12 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# static
+/static/
+
+# other
+*.pdf
+*.zip
+environment.txt
+whoosh_index/
