@@ -5,7 +5,7 @@ from django.templatetags.static import static
 from django.urls import reverse
 
 from ..models import ToolCategory
-from ..utils import IZONE_TOOLS
+from ..utils import QTECHCODE_TOOLS
 
 register = template.Library()
 

@@ -59,11 +59,5 @@ class GiteeImageCloud():
         return js['content']
 
 if __name__ == '__main__':
-    # op = OpenApi()
-    # op.code = 1
-    # op.data = [{"name": "izone"}]
-    # print(op.body)
-    # print(op.error_50000)
-
     GIC = GiteeImageCloud()
     GIC.uploadImage('qrcode.png','qrcode')

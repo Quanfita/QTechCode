@@ -6,7 +6,7 @@ IMAGE_LIST = [
     'registry', 'ruby', 'tomcat', 'ubuntu', 'wordpress'
 ]
 
-IZONE_TOOLS = {
+QTECHCODE_TOOLS = {
     'office': {
         'tag':
         '办公工具',

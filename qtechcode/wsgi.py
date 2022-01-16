@@ -1,5 +1,5 @@
 """
-WSGI config for izone project.
+WSGI config for qtechcode project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
