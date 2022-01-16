@@ -1,0 +1,99 @@
+{% extends "tool/base_tool.html" %}
+{% load static %}
+
+{% block head_title %}二维码生成器_在线工具{% endblock %}
+{% block metas %}
+<meta name="description" content="二维码在线制作工具，在线制作二维码(Quick Response Code)，Python生成二维码，提供常用二维码。">
+<meta name="keywords" content="二维码制作,Python二维码,Quick Response Code,在线工具">
+<meta http-equiv="Access-Control-Allow-Origin" content="*">
+{% endblock %}
+
+{% block tool_name %}二维码在线制作工具{% endblock %}
+{% block left_content %}
+<div class="card-body p-0">
+    <h3 class="card-title pl-2 title-info">工具说明：</h3>
+    <ul>
+        <li>本工具会读取文本框中信息，然后进行二维码制作</li>
+        <li>输入的信息可以为文本或链接</li>
+        <li>工具依赖：qrcode二维码制作第三方Python库</li>
+        </li>
+    </ul>
+</div>
+<div class="mb-3">
+    <div class="form-group">
+        <label>请输入制作二维码的信息：</label>
+        <textarea class="form-control rounded-0" id="form-text" rows="8" required></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-info btn-sm rounded-0" id="start-wc">制作二维码</button>
+</div>
+<div class="card mb-3 rounded-0">
+    <div class="card-body table-responsive push-result text-center p-0" id="show-wc">
+        <div class="p-3" id="qr">二维码显示区</div>
+    </div>
+    <button class="btn btn-info btn-sm rounded-0" id="download-wc">下载二维码</button>
+</div>
+<a id="tttt"></a>
+{% endblock %}
+
+{% block end_f %}
+<script>
+    function convertImageToCanvas(image) {
+        var canvas = document.createElement("canvas");
+        canvas.width = image.width;
+        canvas.height = image.height;
+        canvas.getContext("2d").drawImage(image, 0, 0);
+        return canvas;
+    }
+    /**
+     * 下载图片
+     */
+    function down(name) {
+        var sampleImage = document.getElementById("qrcode");
+        canvas = convertImageToCanvas(sampleImage);
+        url = canvas.toDataURL("image/png");//PNG格式
+        //以下代码为下载此图片功能
+        var triggerDownload = $("#tttt").attr("href", url).attr("download", name);
+        triggerDownload[0].click();
+    //    triggerDownload.remove();
+    }
+    $('#start-wc').click(function () {
+        // word_cloud("{{ csrf_token }}", "{% url 'tool:word_cloud' %}", 50000);
+        var code_data = $('#form-text').val();
+        $.ajaxSetup({
+            data: {
+                csrfmiddlewaretoken: "{{ csrf_token }}"
+            }
+        });
+        $.ajax({
+            method:"POST",
+            data:{
+                "text": code_data
+            },
+            success:function(data){
+                console.log(data);
+                if($("input[name='email']").length > 0) {
+                    // 存在
+                    $('#qrcode').attr('src', 'data:image/jpg;base64,'+data['data']);
+                    $('#download-wc').click(function(){
+                        let name = data['name'];
+                        down(name);
+                    });
+                }
+                else{
+                    $('#qr').text('');
+                    $('#qr').append("<img id='qrcode' src='data:image/jpg;base64,"+data['data']+"'/>");
+                    $('#download-wc').click(function(){
+                        let name = data['name'];
+                        down(name);
+                    });
+                }
+            },
+            error: function (XMLHttpRequest) {
+                var newhtml = '<div class="p-3">服务器异常，未知错误</div>';
+                $('.push-result').html(newhtml)
+            }
+        })
+    });
+</script>
+{% endblock %}

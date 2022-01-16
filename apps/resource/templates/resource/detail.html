@@ -1,0 +1,176 @@
+{% extends 'blog/base.html' %}
+{% load resource_tags static comment_tags %}
+{% load humanize %}
+
+{% block head_title %}{{ resource.title }}_学习资源{% endblock %}
+{% block metas %}
+<meta name="description" content="{{ resource.summary }}">
+<meta name="keywords" content="{% keywords_to_str resource %}">
+{% endblock %}
+
+
+{% block top-file %}
+{% if user.is_authenticated %}
+<link href="https://cdn.bootcss.com/simplemde/1.11.2/simplemde.min.css" rel="stylesheet">
+{% endif %}
+<link href="{% static 'blog/css/detail.css' %}?v=20201107.01" rel="stylesheet">
+<link href="{% static 'blog/css/monokai.css' %}?v=20190910.2" rel="stylesheet">
+<link href="{% static 'comment/css/base_comment.css' %}?v=20190114.554" rel="stylesheet">
+{% endblock %}
+
+{% block base_content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-9 col-xl-10">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-white border-0 rounded-0 mb-2 py-2 f-15">
+                    <li class="breadcrumb-item">
+                        <i class="fa fa-home mr-1"></i><a href="{% url 'blog:index' %}">首页</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'resource:index' %}">学习资源</a>
+                    </li>
+                    <li class="breadcrumb-item active d-none d-md-block" aria-current="page">{{ resource.title }}</li>
+                    <li class="breadcrumb-item active d-md-none" aria-current="page">当前位置</li>
+                </ol>
+            </nav>
+            <div class="card rounded-0 border-0" id="article">
+                <div class="card-body px-2 px-md-3">
+                    <h1 class="card-title text-center font-weight-bold text-info">{{ resource.title }}</h1>
+                    <hr>
+                    <div class="text-center f-13">
+                        <span class="mx-2" data-toggle="tooltip" data-placement="bottom"
+                                title="最后编辑于{{ resource.update_date|date:'Y年m月d日' }}">{{ resource.create_date }}</span>
+                        <span class="mx-2">阅读 {{ resource.views }}</span>
+                        <span class="mx-2">下载 {{ resource.download }}</span>
+                    </div>
+                    <div class="article-body mt-4 f-17" style="line-height:1.8">
+                        {{ resource.body|safe }}
+                    </div>
+                    <div class="row ">
+                        {% if resource.url  %}
+                        <div class="col-lg-3 col-xl-3 offset-1">
+                            <button class="btn btn-info rounded-0" type="button" id="download">本地下载</button>
+                        </div>
+                        {% endif %}
+                        {% if resource.baidu_url %}
+                        <div class="col-lg-3 col-xl-3">
+                            <button class="btn btn-info rounded-0" type="button" id="baidu_download" data-toggle="modal" data-target="#baiduLink">网盘下载</button>
+                            <div class="modal fade" id="baiduLink" tabindex="-1" role="dialog" aria-labelledby="baiduLinkLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="baiduLinkLabel">网盘链接下载</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>百度网盘链接：<div><a href="{{ resource.baidu_url }}" target="_blank">{{ resource.baidu_url }}</a></div></p>
+                                            <p>提取码：{{ resource.baidu_code }}</p>
+                                        </div>
+                                        <div class="modal-footer"></div>
+                                        <!-- <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary rounded-0" data-dismiss="modal">取消</button>
+                                            <button type="button" class="btn btn-info rounded-0" data-dismiss="modal">确定</button>
+                                        </div> -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--图片预览-->
+<div class="modal fade" id="img-to-big" tabindex="-1" role="dialog" aria-labelledby="img-to-bigTitle"
+aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 90%">
+        <img class="rounded mx-auto d-block" alt="image" style="max-width: 100%">
+    </div>
+</div>
+{% if item.get_pre %}
+<div class="more-blog" id="icon-pre-blog">
+    <a href="{{ item.get_pre.get_absolute_url }}">
+        <i class="fa fa-angle-left fa-3x"></i>
+    </a>
+</div>
+{% endif %}
+{% if item.get_next %}
+<div class="more-blog" id="icon-next-blog">
+    <a href="{{ item.get_next.get_absolute_url }}">
+        <i class="fa fa-angle-right fa-3x"></i>
+    </a>
+</div>
+{% endif %}
+{% endblock base_content %}
+
+{% block end_file %}
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+{% if user.is_authenticated %}
+<script src="https://cdn.bootcss.com/simplemde/1.11.2/simplemde.min.js"></script>
+<script src="{% static 'comment/js/editor.js' %}?v=20190311.05908"></script>
+<script src="{% static 'comment/js/activate-power.js' %}?v=20180120"></script>
+<script>
+var sw=window.screen.width;if(sw>1200){POWERMODE.colorful=true;POWERMODE.shake=false;document.body.addEventListener('input',POWERMODE)};
+
+
+</script>
+{% endif %}
+{% if resource.url %}
+<script type="text/javascript">
+    $('#download').click(function(){
+        var a = document.createElement('a');
+        var url = '{{ resource.url }}';
+        var filename = '{{ resource.get_filename }}';
+        a.href = url;
+        a.download = filename;
+        a.click();
+        // window.URL.revokeObjectURL(url);
+        $.ajaxSetup({
+            data: {
+                csrfmiddlewaretoken: "{{ csrf_token }}"
+            }
+        });
+        $.ajax({
+            url:"{% url 'resource:update_downloads' %}",
+            method:"POST",
+            data:{
+                id: "{{ resource.id }}"
+            },
+            success:function(data){
+            },
+            error:function(data){
+            },
+        });
+    });
+</script>
+{% endif %}
+{% if resource.baidu_url %}
+<script type="text/javascript">
+    $('#baidu_download').click(function(){
+        $.ajaxSetup({
+            data: {
+                csrfmiddlewaretoken: "{{ csrf_token }}"
+            }
+        });
+        $.ajax({
+            url:"{% url 'resource:update_downloads' %}",
+            method:"POST",
+            data:{
+                id: "{{ resource.id }}"
+            },
+            success:function(data){
+                console.log(data);
+            },
+            error:function(data){
+                console.log(data);
+            },
+        });
+    });
+</script>
+{% endif %}
+{% endblock %}

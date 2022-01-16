@@ -1,0 +1,104 @@
+{% extends 'blog/base.html' %}
+{% load item_tags static comment_tags %}
+{% load humanize %}
+
+{% block head_title %}{{ item.title }}_商品小卖铺_QTechCode{% endblock %}
+{% block metas %}
+<meta name="description" content="{{ item.summary }}">
+<meta name="keywords" content="{% keywords_to_str item %}">
+{% endblock %}
+
+
+{% block top-file %}
+{% if user.is_authenticated %}
+<link href="https://cdn.bootcss.com/simplemde/1.11.2/simplemde.min.css" rel="stylesheet">
+{% endif %}
+<link href="{% static 'blog/css/detail.css' %}?v=20201107.01" rel="stylesheet">
+<link href="{% static 'blog/css/monokai.css' %}?v=20190910.2" rel="stylesheet">
+<link href="{% static 'comment/css/base_comment.css' %}?v=20190114.554" rel="stylesheet">
+{% endblock %}
+
+{% block base_content %}
+    <div class="container">
+        <div class="row justify-content-center" style="background-color: white;padding: 40px;">
+            <div class="row mt-4 mr-2 ml-2">
+                <!-- item image -->
+                <div class="col-md-6 order-md-1 align-content-center" style="text-align: center;">
+                    <!-- make it responsive, so it won't be larger than parent -->
+                    <img src="{{ item.img_link }}" class="img-fluid mt-2 mb-2 border border-info" style="max-height: 300px;" alt="item image" style="width: 100%; height: auto;">
+                </div>
+                <!-- item description + price -->
+                <div class="col-md-6 order-md-2">
+                    <h1 style="font-size: xx-large;margin-top: 20px;"><b>{{ item.title }}</b></h1>
+                    <p class="text-md-left mt-2">
+                        价格:
+                        <span style="color: red; font-size: xx-large"><b> &emsp;￥{{ item.price|div:100|floatformat:2 }} </b></span>
+                    </p>
+                    <div class="clearfix">
+                        <div class="float-left">售出：&emsp;<span>{{ item.sales }}</span></div><div class="float-right" style="padding-right: 60px;">库存：&emsp;<span>{{ item.amount }}</span></div>
+                    </div>
+                    <div class="clearfix">
+                        <div class="float-left text-ms-left mt-2 text-danger">虚拟商品，自动发货</div>
+                        <button class="btn btn-info float-right mt-2" id="btn" style="width: 80px; right: 60px; position: relative;">购买</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center" style="background-color: white;">
+            <div class="col-lg-11 col-md-11 col-sm-10 article-body">
+                <h2>物品详情</h2>
+                <div>{{ item.body|safe }}</div>
+            </div>
+        </div>
+    </div>
+<!--图片预览-->
+<div class="modal fade" id="img-to-big" tabindex="-1" role="dialog" aria-labelledby="img-to-bigTitle"
+aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 90%">
+        <img class="rounded mx-auto d-block" alt="image" style="max-width: 100%">
+    </div>
+</div>
+{% if item.get_pre %}
+<div class="more-blog" id="icon-pre-blog">
+    <a href="{{ item.get_pre.get_absolute_url }}">
+        <i class="fa fa-angle-left fa-3x"></i>
+    </a>
+</div>
+{% endif %}
+{% if item.get_next %}
+<div class="more-blog" id="icon-next-blog">
+    <a href="{{ item.get_next.get_absolute_url }}">
+        <i class="fa fa-angle-right fa-3x"></i>
+    </a>
+</div>
+{% endif %}
+{% endblock base_content %}
+
+{% block end_file %}
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+{% if user.is_authenticated %}
+<script src="https://cdn.bootcss.com/simplemde/1.11.2/simplemde.min.js"></script>
+<script src="{% static 'comment/js/editor.js' %}?v=20190311.05908"></script>
+<script src="{% static 'comment/js/activate-power.js' %}?v=20180120"></script>
+<script>
+var sw=window.screen.width;if(sw>1200){POWERMODE.colorful=true;POWERMODE.shake=false;document.body.addEventListener('input',POWERMODE)};
+
+
+</script>
+{% endif %}
+<script type="text/javascript">
+    $('#btn').click(function(){
+        {% if item.deliver_type == '3' %}
+        window.location = '{{ item.deliver_info }}';
+        {% else %}
+        window.location = '/store/pay?goodsId={{ item.id }}';
+        {% endif %}
+    });
+</script>
+<script>
+(function(){
+var src = "https://s.ssl.qhres2.com/ssl/ab77b6ea7f3fbf79.js";
+document.write('<script src="' + src + '" id="sozz"><\/script>');
+})();
+</script>
+{% endblock %}

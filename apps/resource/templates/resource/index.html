@@ -1,0 +1,23 @@
+{% extends "blog/base.html" %}
+{% load static %}
+{% load humanize %}
+{% load resource_tags %}
+
+{% block head_title %}QTechCode_专业的Python技术分享{% endblock %}
+{% block metas %}
+    <meta name="description" content="{{ site_description }}">
+    <meta name="keywords" content="{{ site_keywords }}">
+    <!--站长验证-->
+    {% if site_verification %}{{ site_verification|safe }}{% endif %}
+{% endblock %}
+
+{% block base_content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-md-10">
+            {% load_item_summary resources %}
+            {% if is_paginated %}{% load_pages %}{% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

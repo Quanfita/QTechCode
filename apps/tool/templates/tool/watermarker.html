@@ -1,0 +1,112 @@
+{% extends "tool/base_tool.html" %}
+{% load static %}
+
+{% block head_title %}图片添加水印工具_在线工具_QTechCode{% endblock %}
+{% block metas %}
+<meta name="description" content="图片在线添加水印工具，在线制作图片水印(Water Marker)，Python添加半透明水印。">
+<meta name="keywords" content="图片水印,Python水印,Water Marker,在线工具,半透明水印,全图水印">
+<meta http-equiv="Access-Control-Allow-Origin" content="*">
+{% endblock %}
+
+{% block tool_name %}图片在线添加水印工具{% endblock %}
+{% block left_content %}
+<div class="card-body p-0">
+    <h3 class="card-title pl-2 title-info">工具说明：</h3>
+    <ul>
+        <li>本工具会读取文本框中信息和上传的图片，然后将文本框中的文本以水印的形式添加到图片上</li>
+        <li>输入的信息可以为文本或链接，图片支持jpg、png格式</li>
+        <li>工具依赖：Pillow第三方Python图像处理库</li>
+        </li>
+    </ul>
+</div>
+<div class="mb-3">
+    <div class="form-group">
+        <div class="custom-file">
+            <input type="file" class="custom-file-input" id="customFile" name="上传" accept="image/png, image/jpeg" style="width: 0px;height: 0px;" />
+            <label class="btn btn-info btn-sm rounded-0" for="customFile">选择图片</label>
+        </div>
+        <img src="" id="show-img" style="max-width: 100%">
+        <label>请输入制作水印的信息：</label>
+        <textarea class="form-control rounded-0" id="form-text" rows="8" required></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-info btn-sm rounded-0" id="start-wc">添加水印</button>
+</div>
+<div class="card mb-3 rounded-0">
+    <div class="card-body table-responsive push-result text-center p-0" id="show-wc">
+        <div class="p-3" id="wm">水印结果显示区</div>
+    </div>
+    <button class="btn btn-info btn-sm rounded-0" id="download-wc">下载图片</button>
+</div>
+<a id="tttt"></a>
+{% endblock %}
+
+{% block end_f %}
+<script>
+    $("#customFile").change(function(){
+        var reads= new FileReader();
+        f=document.getElementById('customFile').files[0];
+        reads.readAsDataURL(f);
+        reads.onload=function (e) {
+            document.getElementById('show-img').src=this.result;
+        };
+    });
+    function convertImageToCanvas(image) {
+        var canvas = document.createElement("canvas");
+        canvas.width = image.width;
+        canvas.height = image.height;
+        canvas.getContext("2d").drawImage(image, 0, 0);
+        return canvas;
+    }
+    /**
+     * 下载图片
+     */
+    function down(name) {
+        var sampleImage = document.getElementById("qrcode");
+        canvas = convertImageToCanvas(sampleImage);
+        url = canvas.toDataURL("image/png");//PNG格式
+        //以下代码为下载此图片功能
+        var triggerDownload = $("#tttt").attr("href", url).attr("download", name);
+        triggerDownload[0].click();
+    //    triggerDownload.remove();
+    }
+    $('#start-wc').click(function () {
+        // word_cloud("{{ csrf_token }}", "{% url 'tool:word_cloud' %}", 50000);
+        var code_data = $('#form-text').val();
+        var formData = new FormData();
+        formData.append("file",$("#customFile")[0].files[0]);
+        formData.append("text",code_data);
+        $.ajax({
+            method:"POST",
+            dataType:"json",
+            data:formData,
+            processData : false, // 使数据不做处理
+            contentType : false, // 不要设置Content-Type请求头
+            success:function(data){
+                console.log(data);
+                if($("#watermarker").length > 0) {
+                    // 存在
+                    $('#watermarker').attr('src', 'data:image/jpg;base64,'+data['data']);
+                    $('#download-wc').click(function(){
+                        let name = data['name'];
+                        down(name);
+                    });
+                }
+                else{
+                    $('#wm').text('');
+                    $('#wm').append("<img id='watermarker' style='max-width: 100%' src='data:image/jpg;base64,"+data['data']+"'/>");
+                    $('#download-wc').click(function(){
+                        let name = data['name'];
+                        down(name);
+                    });
+                }
+            },
+            error: function (XMLHttpRequest) {
+                // var newhtml = '<div class="p-3">服务器异常，未知错误</div>';
+                // $('.push-result').html(newhtml)
+                console.log(XMLHttpRequest);
+            }
+        })
+    });
+</script>
+{% endblock %}

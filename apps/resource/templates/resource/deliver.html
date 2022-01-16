@@ -1,0 +1,77 @@
+{% extends "blog/base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block head_title %}支付成功_{{ pay_id }}_QTechCode{% endblock %}
+{% block metas %}
+    <meta name="description" content="{{ site_description }}">
+    <meta name="keywords" content="{{ site_keywords }}">
+    <!--站长验证-->
+    {% if site_verification %}{{ site_verification|safe }}{% endif %}
+    <link href="{% static 'pay/css/pay.css' %}" rel="stylesheet">
+    <style>
+        .up-block{
+            padding-top: 25px;
+            padding-bottom: 25px;
+            background-color: #f5fef3;
+        }
+        .content{
+            padding-top: 25px;
+            padding-bottom: 35px;
+            background-color: white;
+        }
+        .info-list{
+            list-style: none;
+        }
+        .info-list li{
+            margin-top: 12px;
+            margin-bottom: 12px;
+        }
+        .remark{
+            color: #aaa;
+        }
+        .visual{
+            /* margin-top: 40px; */
+            width: 100%;
+            min-height: 60px;
+            background-color:#fafafa;
+            border-radius: 20px;
+            border: 1px solid #f0f0f0;
+        }
+    </style>
+{% endblock %}
+
+{% block base_content %}
+<div class="container">
+    <div>
+        <div class="row up-block">
+            <div class="col-md-8 offset-md-1">
+                <i class="fa fa-check-circle fa-2x text-info" aria-hidden="true" style="margin:20px;"></i><span style="font-size: x-large;"><b>支付成功！</b></span>
+            </div>
+        </div>
+        <div class="row content">
+            <div class="col-md-4 offset-md-1">
+                <ul class="info-list">
+                    <li>商品订单：{{ orderid }}</li>
+                    <li>支付金额：￥{{ realPrice }}</li>
+                    <li>商品名称：{{ content }}</li>
+                    <li>应付金额：￥{{ price }}</li>
+                    <li>支付方式：{{ pay_type }}</li>
+                    <li>购买时间：{{ confirm_date }}</li>
+                    <li class="remark">若有疑问请与客服联系</li>
+                    <li class="remark">客服邮箱：quanfita98@163.com</li>
+                </ul>
+                <a href="{% url 'store:index' %}" class="btn btn-info btn-lg rounded-0" style="min-width: 100px;margin-top: 30px;">返回</a>
+            </div>
+            <div class="col-md-6 visual"><div style="width: 100%;padding: 40px 20px;">
+                <!-- <p>
+                    链接：<a href="https://pan.baidu.com/s/199jGcX8-wteDnZ1S-hmfaw" target="_blank">https://pan.baidu.com/s/199jGcX8-wteDnZ1S-hmfaw</a>
+                </p>
+                <p>提取码：coj6</p> -->
+                {{ info | safe }}
+                <p style="color: red; font-weight: lighter;font-size: small;position: absolute;bottom: 20px;">*请勿将链接发送给他人，以免造成链接失效无法访问的情况。<br>*由于用户自身原因造成链接失效，本站概不负责！</p>
+            </div></div>
+        </div>
+    </div>
+</div>
+{% endblock %}

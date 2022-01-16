@@ -1,0 +1,12 @@
+﻿User-agent: *
+Disallow: /adminx/
+Disallow: /accounts/
+Disallow: /comment/
+Disallow: /feed/
+Disallow: /search/
+Disallow: /store/pay/
+Disallow: /store/callback/
+Disallow: /store/deliver/
+Disallow: /silian.xml
+
+Sitemap: {{ site_url }}/sitemap.xml

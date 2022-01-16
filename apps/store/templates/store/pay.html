@@ -1,0 +1,98 @@
+{% extends "blog/base.html" %}
+{% load static %}
+{% load humanize %}
+{% load item_tags %}
+
+{% block head_title %}支付订单_{{ pay_id }}_QTechCode{% endblock %}
+{% block metas %}
+    <meta name="description" content="{{ site_description }}">
+    <meta name="keywords" content="{{ site_keywords }}">
+    <!--站长验证-->
+    {% if site_verification %}{{ site_verification|safe }}{% endif %}
+    <link href="{% static 'pay/css/pay.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block base_content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="top_box"></div>
+                <div class="in_box">
+                    <div class="con_1"></div>
+                    <div class="con_list">
+                        <ul>
+                            <li>订单号：{{ pay_id }}</li>
+                            <li>订单时间： {{ create_time }}</li>
+                            <li>商品名称： {{ content }}</li>
+                            <li>金额： <span class="spanyellpw spansize-24">{{ price | div:100 }} 元</span></li>
+                            <li>支付方式： <span class="spanyellpw" id="pay-type">支付宝支付</span></li>
+                            <li></li>
+                        </ul>
+                        <div class="clear"></div>
+                    </div>
+                    <div class="row justify-content-start">
+                        <div class="col-md-2 offset-md-3">
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="2" checked>
+                          <label class="form-check-label radio-label" for="inlineRadio1"><img src="{% static 'pay/img/alipay.png' %}"></label>
+                        </div></div>
+                        <div class="col-md-2 offset-md-2">
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="1">
+                          <label class="form-check-label" for="inlineRadio2"><img src="{% static 'pay/img/wechatpay.png' %}"></label>
+                        </div></div>
+                    </div>
+                    <div align="center" id="qrcode" style="margin-top: 40px;">
+                        <p id="hint" style='color:#f00;'>请核对订单金额，确认无误后点击付款按钮</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 offset-md-9">
+                        <button class="btn btn-info fukuan" id="pay">付款</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block end_file %}
+<script>
+$(document).ready(function() {
+    $('input[type=radio][name=inlineRadioOptions]').change(function() {
+        if (this.value == '2') {
+            $('#pay-type').text("支付宝支付");
+        }
+        else if (this.value == '1') {
+            $('#pay-type').text("微信支付");
+        }
+    });
+});
+$('#pay').click(function() {
+    var p_type = $('input[type=radio][name=inlineRadioOptions]:checked').val();
+    console.log(p_type);
+    $.ajaxSetup({
+        data: {
+            csrfmiddlewaretoken: "{{ csrf_token }}"
+        }
+    });
+    $.ajax({
+        method: 'POST',
+        data:{
+            pay_id: "{{ pay_id }}", 
+            goodid: "{{ goodid }}",
+            p_type: p_type, 
+            create_time: "{{ create_time }}",
+            price: "{{ price }}", 
+            content: "{{ content }}"
+        },
+        success:function(data){
+            document.write(data);
+        },
+        error:function(){
+            alert("提交订单失败，请重新尝试！")
+        }
+    });
+});
+</script>
+{% endblock %}

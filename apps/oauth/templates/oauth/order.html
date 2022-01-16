@@ -1,0 +1,62 @@
+{% extends 'blog/base.html' %}
+{% load crispy_forms_tags %}
+{% load blog_tags oauth_tags item_tags %}
+{% load static %}
+
+{% block metas %}
+    <meta name="description" content="用户账号管理，使用django-allauth社交用户系统，支持微博、Github等社交账号登录，加入{{ site_end_title }}，查看更多信息。">
+    <meta name="keywords" content="django-allauth,社交用户系统,OAuth 2.0">
+{% endblock %}
+
+{% block top-file %}
+<link href="{% static 'blog/css/account.css' %}?v=20171229.01966" rel="stylesheet">
+{% endblock %}
+
+{% block head_title%}个人资料{% endblock%}
+
+{% block base_content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12 px-xl-5">
+            <div class="card rounded-0 px-3 px-lg-4" style="width: 100%;">
+                <div class="card-header text-center bg-white py-2"><h3 class="my-1 text-info">历史订单</h3></div>
+                <div class="card-body" style="min-height: 400px;">
+                    <div class="text-danger">*历史订单只记录自动发货订单，第三方订单请到相应平台查看</div>
+                    <table class="table">
+                        <thead>
+                          <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">订单编号</th>
+                            <th scope="col">商品名称</th>
+                            <th scope="col">购买时间</th>
+                            <th scope="col">订单状态</th>
+                            <th scope="col">支付金额</th>
+                            <th scope="col">支付方式</th>
+                            <th scope="col">操作</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in orders %}
+                            <tr>
+                                <th scope="row">{{ forloop.counter }}</th>
+                                <td>{{order.uid}}</td>
+                                <td style="max-width: 250px;">{{order.good.title}}</td>
+                                <td>{{order.confirm_date}}</td>
+                                {% if order.is_confirmed %}<td class="text-success">已完成</td>{% else %}<td class="text-danger">未付款</td>{% endif %}
+                                <td>{{order.realPrice | div:100 | floatformat:2}}</td>
+                                <td>{{order.get_pay_type_display}}</td>
+                                <td><a href="{% url 'store:deliver' %}?orderid={{order.uid}}">详情</a></td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="7">您还没有相关订单~！</td></tr>
+                            {% endfor %}
+                        </tbody>
+                      </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+

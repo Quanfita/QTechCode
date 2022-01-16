@@ -1,0 +1,40 @@
+{% load oauth_tags item_tags %}
+{% load humanize static%}
+<div class="summary-list">
+    {% for item in items %}
+    <div class="media mb-1 mb-sm-2 p-2 p-lg-3">
+        <div class="align-self-center mr-2 mr-lg-3 w-25 modal-open">
+            <a href="{{ item.get_absolute_url }}" target="_blank">
+                <div class="w-100 item-img" style="text-align: center;">
+                    <img  style="max-height:130px;" src="{{ item.img_link }}" alt="{{ item.title }}">
+                </div>
+            </a>
+        </div>
+        <div class="media-body">
+            {% if item.is_top %}<img class="float-right top-item-img" src="{% static 'blog/img/TOP.png' %}">{% endif %}
+            <!-- <div class="text-muted mb-2 f-12">
+                {% get_user_avatar_tag item.author %}
+                <span>{{ item.author }}</span>
+                <span><i class="fa fa-calendar-times-o ml-2 mr-1"></i>{{ item.create_date|naturaltime }}</span>
+            </div> -->
+            <h2 class="mt-0 font-weight-bold text-info">
+                <a href="{{ item.get_absolute_url }}" target="_blank">{{ item.title}}</a>
+            </h2>
+            <p class="d-none d-sm-block mb-2 f-15">{{ item.summary|truncatechars:130 }}</p>
+            <p class="d-block d-sm-none mb-2 f-15">{{ item.summary|truncatechars:64 }}</p>
+            <div class="text-danger">
+                <span style="font-size: x-large;"><i class="fa fa-rmb ml-2 mr-1"></i> <b>{{ item.price | div:100 | floatformat:2 }}</b></span>
+            </div>
+            <div class="text-muted mb-0">
+                <span class="cate"><i class="fa fa-trophy mr-1"></i>{% if item.deliver_type == "3" %}第三方平台交易{% else %}自动发货{% endif %}</a></span>
+                <span><i class="fa fa-eye ml-2 mr-1"></i>{{ item.views }}</span>
+                <span><i class="fa fa-shopping-cart ml-2 mr-1"></i>{{ item.sales }}</span>
+                <span style="margin-left: 40px;"> </span>
+                {% for tag in item.keywords.all %}<span style="margin-right: 10px;"><i class="fa fa-hashtag ml-2 mr-1"></i>{{tag}}</span>{% endfor %}
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="p-3 mt-3 bg-white"><p>暂时没有商品!</p></div>
+    {% endfor %}
+</div>
