@@ -2,6 +2,8 @@
  
 这是一个基于Django的博客站点，在[IZONE主题](https://github.com/Hopetree/izone)的基础上进行了一些修改。
 
+站点链接：[https://quanfita.cn](https://quanfita.cn)
+
 ## 添加功能
 
 - 前端markdown渲染添加MathJax，适配LaTeX数学公式
