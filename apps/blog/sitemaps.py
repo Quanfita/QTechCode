@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+from functools import total_ordering
 from django.contrib.sitemaps import Sitemap
 from .models import Article, Category, Tag
+from resource.models import Resource
 from django.db.models.aggregates import Count
 from .utils import site_protocol
 
@@ -40,3 +42,13 @@ class TagSitemap(MySitemap):
 
     def lastmod(self, obj):
         return obj.article_set.first().create_date
+
+class ResourceSitemap(MySitemap):
+    changefreq = 'weekly'
+    priority = 0.8
+
+    def items(self):
+        return Resource.objects.all()
+    
+    def lastmod(self, obj):
+        return obj.update_date
