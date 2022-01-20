@@ -121,8 +121,25 @@
 
 {% block end_file %}
 <!--<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>-->
-<script src='https://cdn.bootcdn.net/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
-{% if user.is_authenticated %}
+
+<script>
+window.MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']]
+        },
+        svg: {
+            fontCache: 'global'
+        }
+        };
+
+        (function () {
+        var script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js';
+        script.async = true;
+        document.head.appendChild(script);
+        })();
+</script>
+<{% if user.is_authenticated %}
 <script src="https://cdn.bootcss.com/simplemde/1.11.2/simplemde.min.js"></script>
 <script src="{% static 'comment/js/editor.js' %}?v=20190311.05908"></script>
 <script src="{% static 'comment/js/activate-power.js' %}?v=20180120"></script>
