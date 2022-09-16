@@ -17,7 +17,7 @@ idna==2.8
 jieba==0.39
 Markdown==3.1.1
 mysqlclient==1.4.4
-oauthlib==3.1.1
+oauthlib==3.2.1
 #olefile==0.46
 pilkit==2.0
 Pillow==9.0.0
